@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 
 export interface Article {
@@ -14,7 +15,7 @@ export interface Article {
   publishedAt: Date;
 }
 
-export default function Home() {
+export default function page() {
   const [articles, setArticles] = useState<Article[]>([]);
   const STRAPI_URL = "http://localhost:1337";
 
@@ -39,34 +40,24 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="font-[geist] bg-gradient-to-t from-[#000000] to-[#222222] h-screen ">
-      <div className="grid items-center justify-items-center pt-3">
-        <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8">
-          <li><a className="hover:text-gray-500" href="#">Blog</a></li> |
-          <li><a className="hover:text-gray-500" href="#">About</a></li> |
-          <li><a className="hover:text-gray-500" href="https://www.linkedin.com/in/ian-chelig-790949129/">LinkedIn</a></li> |
-          <li><a className="hover:text-gray-500" href="https://github.com/ian-chelig">Github</a></li> |
-          <li><a className="hover:text-gray-500" href="#">Contact</a></li>
-        </ul>
-        <input placeholder="Search..." />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {articles.map((article) => (
-          <article
-            key={article.title}
-            className="shadow-md rounded-lg overflow-hidden"
-          >
-            <div className="p-4">
-              <h3 className="text-lg font-bold mb-2">{article.title}</h3>
-              <p className="text-gray-600 mb-4">{article.body}</p>
-              <p className="text-sm text-gray-500">
-                Published: {formatDate(article.publishedAt)}
-              </p>
-            </div>
-          </article>
-        ))}
-      </div>
+    <div>
+      {articles.map((article) => (
+        <article
+          key={article.title}
+        >
+          <div className="items-center justify-items-center rounded-lg bg-zinc-900/60 border border-zinc-800/70 px-4 py-2 shadow-sm g-gray-700/10 rounded-lg m-2">
+            <Link href={`/${article.slug}`}>
+              <div><h3 className="text-3xl font-bold">{article.title}</h3></div>
+              <div><p className="text-lg text-gray-500">{article.description}</p></div>
+              <div>
+                <p className="text-sm text-gray-300">
+                  Published: {formatDate(article.publishedAt)}
+                </p>
+              </div>
+            </Link>
+          </div>
+        </article>
+      ))}
     </div >
   );
 }
