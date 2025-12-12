@@ -1,26 +1,50 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@import "highlight.js/styles/dark.min.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
-/*@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}*/
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility prose-theme {
+  --tw-prose-body: var(--color-zinc-200);
+  --tw-prose-figcaption: var(--color-zinc-500);
+  --tw-prose-headings: var(--color-zinc-300);
+  --tw-prose-lead: var(--color-zinc-200);
+  --tw-prose-links: var(--color-zinc-500);
+  --tw-prose-bold: var(--color-zinc-300);
+  --tw-prose-counters: var(--color-zinc-200);
+  --tw-prose-bullets: var(--color-zinc-200);
+  --tw-prose-hr: var(--color-zinc-200);
+  --tw-prose-quotes: var(--color-zinc-200);
+  --tw-prose-quote-borders: var(--color-zinc-200);
+  --tw-prose-captions: var(--color-zinc-200);
+  --tw-prose-code: var(--color-zinc-800);
+  --tw-prose-pre-code: var(--color-zinc-200);
+  --tw-prose-pre-bg: var(--color-zinc-900);
+  --tw-prose-th-borders: var(--color-zinc-200);
+  --tw-prose-td-borders: var(--color-zinc-200);
+  --tw-prose-invert-body: var(--color-zinc-200);
+  --tw-prose-invert-headings: var(--color-zinc-200);
+  --tw-prose-invert-lead: var(--color-zinc-200);
+  --tw-prose-invert-links: var(--color-zinc-200);
+  --tw-prose-invert-bold: var(--color-zinc-200);
+  --tw-prose-invert-counters: var(--color-zinc-200);
+  --tw-prose-invert-bullets: var(--color-zinc-200);
+  --tw-prose-invert-hr: var(--color-zinc-200);
+  --tw-prose-invert-quotes: var(--color-zinc-200);
+  --tw-prose-invert-quote-borders: var(--color-zinc-200);
+  --tw-prose-invert-captions: var(--color-zinc-200);
+  --tw-prose-invert-code: var(--color-zinc-200);
+  --tw-prose-invert-pre-code: var(--color-zinc-200);
+  --tw-prose-invert-pre-bg: rgb(0 0 0 / 50%);
+  --tw-prose-invert-th-borders: var(--color-zinc-200);
+  --tw-prose-invert-td-borders: var(--color-zinc-200);
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(to bottom, #36404a, #29323c);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-mono), var(--font-geist-mono), var(--font-geist-sans);
 }
