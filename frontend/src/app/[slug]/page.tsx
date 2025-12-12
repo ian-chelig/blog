@@ -8,6 +8,19 @@ export interface Article {
   publishedAt: Date;
 }
 import qs from "qs";
+import markdownit from 'markdown-it';
+import implicitFigures from "markdown-it-implicit-figures";
+import DOMPurify from 'isomorphic-dompurify';
+import hljs from "highlight.js";
+
+declare global {
+  function isSpace(code: number): boolean;
+}
+
+// Define the isSpace function
+globalThis.isSpace = function(code: number): boolean {
+  return code === 0x20 || code === 0x09 || code === 0x0A || code === 0x0B || code === 0x0C || code === 0x0D;
+};
 
 const formatDate = (date: Date) => {
   const options: Intl.DateTimeFormatOptions = {
@@ -48,6 +61,61 @@ export default async function Article({
   const { slug } = params;
   if (!slug) <p>Article not found!</p>;
   const article = await getArticle(slug);
+  const md = markdownit({
+    // Enable HTML tags in source
+    html: false,
+
+    // Use '/' to close single tags (<br />).
+    // This is only for full CommonMark compatibility.
+    xhtmlOut: false,
+
+    // Convert '\n' in paragraphs into <br>
+    breaks: true,
+
+    // CSS language prefix for fenced blocks. Can be
+    // useful for external highlighters.
+    langPrefix: 'language-',
+
+    // Autoconvert URL-like text to links
+    linkify: true,
+
+    // Enable some language-neutral replacement + quotes beautification
+    // For the full list of replacements, see https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/replacements.mjs
+    typographer: true,
+
+    // Double + single quotes replacement pairs, when typographer enabled,
+    // and smartquotes on. Could be either a String or an Array.
+    //
+    // For example, you can use '«»„“' for Russian, '„“‚‘' for German,
+    // and ['«\xA0', '\xA0»', '‹\xA0', '\xA0›'] for French (including nbsp).
+    quotes: '“”‘’',
+
+    // Highlighter function. Should return escaped HTML,
+    // or '' if the source string is not changed and should be escaped externally.
+    // If result starts with <pre... internal wrapper is skipped.
+    highlight: function(str: any, lang: any) {
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(str, { language: lang }).value;
+        } catch (__) { }
+      }
+
+      return ''; // use external default escaping
+    }
+  });
+
+  md.use(implicitFigures, {
+    figcaption: true,   // enable <figcaption> :contentReference[oaicite:1]{index=1}
+    // dataType: true,  // optional: adds data-type="image" on <figure> :contentReference[oaicite:2]{index=2}
+  });
+
+
+
+
+  let pure = "";
+  if (article.body) {
+    pure = DOMPurify.sanitize(md.render(article.body));
+  }
 
   return (
     <div>
@@ -62,10 +130,12 @@ export default async function Article({
               Published: {formatDate(article.publishedAt)}
             </p>
           </div>
-          <div><p className="text-lg text-gray-400 mb-2">{article.body}</p></div>
+          <div className="max-w-5xl prose prose-theme  prose-img:mb-[-10] 
+            prose-img:rounded-xl prose-img:mx-auto prose-figcaption:text-sm 
+            prose-figcaption:text-center prose-figcaption:mb-4 prose-figcaption:text-zinc-500"
+            dangerouslySetInnerHTML={{ __html: pure }} />
         </div>
       </article>
-
     </div>
   );
 };
