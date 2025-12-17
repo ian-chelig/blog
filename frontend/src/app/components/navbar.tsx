@@ -1,3 +1,4 @@
+import { FaRss } from 'react-icons/fa';
 const Navbar = () => {
   return (
     <div className="w-full pt-6">
@@ -20,6 +21,12 @@ const Navbar = () => {
             <a className="hover:text-gray-400" target="_blank" href="https://github.com/ian-chelig">
               Github
             </a>
+            <div className="text-gray-500">|</div>
+            <a className="hover:text-gray-400 inline-flex items-center gap-1" href="/rss.xml">
+              <span>rss</span>
+              <FaRss className="text-[0.85em] opacity-90" />
+            </a>
+
           </div>
         </div>
 
