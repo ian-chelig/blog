@@ -32,13 +32,13 @@ const TableOfContents = () => {
 
         return { id, text };
       })
-      .filter((x): x is TocItem => x !== null);
+      .filter((v) => v !== null);
 
     setItems(next);
   }, [mounted, pathname]);
 
   if (!mounted) return null;
-  if (items.length === 0) return <div className="hidden" />;
+  if (items.length === 0) return null;
 
   return (
     <div className="rounded-lg bg-zinc-900/50 border border-zinc-800/70 p-2">
