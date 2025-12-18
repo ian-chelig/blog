@@ -54,12 +54,13 @@ async function getArticle(slug: string) {
   const article = data?.data[0] ?? null;
   return article;
 }
+
 export default async function Article({
   params,
 }: {
   params: { slug: string };
 }) {
-  const { slug } = params;
+  const { slug } = await params;
   if (!slug) notFound();
   const article = await getArticle(slug);
   if (!article) notFound();
@@ -84,8 +85,7 @@ export default async function Article({
   });
 
   md.use(implicitFigures, {
-    figcaption: true,   // enable <figcaption> :contentReference[oaicite:1]{index=1}
-    // dataType: true,  // optional: adds data-type="image" on <figure> :contentReference[oaicite:2]{index=2}
+    figcaption: true,
   });
 
   let pure = "";

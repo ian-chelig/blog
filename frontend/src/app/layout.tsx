@@ -5,6 +5,7 @@ import "./globals.css";
 import ScrollToTop from "./components/scrollToTop";
 import Navbar from "./components/navbar";
 import TableOfContents from "./components/tableOfContents";
+import Search from "./components/searchPage";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,10 @@ export default function RootLayout({
               <div className="grid grid-cols-1 gap-0 lg:grid-cols-[14rem_minmax(0,48rem)_14rem]">
                 <aside className="hidden lg:block order-2 lg:order-1 lg:sticky lg:top-5 h-fit pt-[8px]">
                   <div className="rounded-lg bg-zinc-900/50 border border-zinc-800/70 p-2 text-right">
-                    <a className="hover:text-gray-400" href="/">Home</a><br />
+                    <a className="hover:text-gray-400" href="/">
+                      ↩Blog
+                    </a>
+                    <br />
                     2025 v
                   </div>
                 </aside>

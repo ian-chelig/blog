@@ -41,7 +41,7 @@ export async function GET() {
 
   // 3) add each article as an item
   for (const a of articles) {
-    const link = `${SITE_URL}/${a.slug}`; // change to your actual post route
+    const link = `${SITE_URL}/${a.slug}`;
     feed.item({
       title: a.title ?? "",
       description: a.description ?? "",

@@ -13,6 +13,17 @@
 # testing
 /coverage
 
+# MeiliSearch
+data.ms/
+meili_data/
+meilisearch-data/
+dumps/
+snapshots/
+
+# MeiliSearch runtime artifacts
+*.ms
+*.mdb
+
 # next.js
 /.next/
 /out/

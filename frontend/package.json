@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@fortawesome/react-fontawesome": "^3.1.1",
+    "@meilisearch/instant-meilisearch": "^0.29.0",
     "dom-parser": "^1.1.5",
     "highlight.js": "^11.11.1",
+    "instantsearch.css": "^8.9.0",
     "isomorphic-dompurify": "^2.34.0",
     "markdown-it": "^14.1.0",
     "markdown-it-implicit-figures": "^0.12.0",
@@ -19,6 +21,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
+    "react-instantsearch": "^7.21.0",
     "rss": "^1.2.2"
   },
   "devDependencies": {
