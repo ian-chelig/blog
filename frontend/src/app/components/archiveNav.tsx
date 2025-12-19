@@ -44,7 +44,7 @@ function getArticlesByYear(articles: Article[]): YearArchiveNav {
     output[year].months[month].total++;
     output[year].months[month].articles.push(v);
 
-    if (output[year].total > 5) output[year].hasMonths = true;
+    if (output[year].total > 9) output[year].hasMonths = true;
   }
   return output;
 }
@@ -137,32 +137,36 @@ export default async function ArchiveNav() {
                         </summary>
 
                         <div className="mt-1 space-y-1 pl-2">
-                          {bucket.articles.map((a) => (
-                            <Link
-                              key={a.slug}
-                              href={`/${a.slug}`}
-                              className="block text-sm text-slate-100/90 hover:text-slate-100 hover:underline underline-offset-4 truncate"
-                              title={`${a.title} — ${formatDateUTC(a.publishedAt)}`}
-                            >
-                              {a.title}
-                            </Link>
-                          ))}
+                          <ul>
+                            {bucket.articles.map((a) => (
+                              <Link
+                                key={a.slug}
+                                href={`/${a.slug}`}
+                                className="block text-sm text-slate-100/90 hover:text-slate-100 hover:underline underline-offset-4 truncate"
+                                title={`${a.title} — ${formatDateUTC(a.publishedAt)}`}
+                              >
+                                <li>{a.title}</li>
+                              </Link>
+                            ))}
+                          </ul>
                         </div>
                       </details>
                     );
                   })
                 ) : (
                   <div className="space-y-1">
-                    {year.articles.map((a) => (
-                      <Link
-                        key={a.slug}
-                        href={`/${a.slug}`}
-                        className="block rounded-md px-2 py-1 text-sm text-slate-100/90 hover:text-slate-100 hover:bg-white/5 transition truncate"
-                        title={`${a.title} — ${formatDateUTC(a.publishedAt)}`}
-                      >
-                        {a.title}
-                      </Link>
-                    ))}
+                    <ul>
+                      {year.articles.map((a) => (
+                        <Link
+                          key={a.slug}
+                          href={`/${a.slug}`}
+                          className="block rounded-md px-2 py-1 text-sm text-slate-100/90 hover:text-slate-100 hover:bg-white/5 transition truncate"
+                          title={`${a.title} — ${formatDateUTC(a.publishedAt)}`}
+                        >
+                          <li>{a.title}</li>
+                        </Link>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>
