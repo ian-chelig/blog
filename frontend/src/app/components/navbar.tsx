@@ -47,7 +47,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between mt-2">
           <a
             href="mailto:ianm.chelig@gmail.com"
-            className="text-s hover:text-gray-400"
+            className="inline-flex items-center -mt-10 h-10 text-sm hover:text-gray-400"
           >
             ianm.chelig@gmail.com
           </a>

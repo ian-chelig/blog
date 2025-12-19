@@ -15,7 +15,6 @@ export default function SearchBar() {
   function clearQuery() {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("q");
-    const qs = params.toString();
   }
 
   function submitQuery(query: string) {

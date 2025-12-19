@@ -3,7 +3,7 @@ import DOMPurify from "isomorphic-dompurify";
 import Link from "next/link";
 
 type SearchPageProps = {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 };
 
 const formatDate = (date: Date) => {
@@ -17,10 +17,11 @@ const formatDate = (date: Date) => {
 };
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const q = (searchParams.q ?? "").trim();
+  const { q } = await searchParams;
+  const query = q ?? "";
 
   const hits: any[] = await (async () => {
-    if (!q) return [];
+    if (!query) return [];
     const client = new MeiliSearch({
       host: process.env.MEILI_HOST ?? "http://localhost:7700",
       apiKey: process.env.MEILI_MASTER_KEY ?? "aSampleMasterKey", // server-only, NOT NEXT_PUBLIC
@@ -78,7 +79,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       ) : null}
       {hits.map((hit) => (
         <article key={hit.id ?? hit.slug}>
-          <div className="items-center justify-items-center rounded-lg bg-zinc-900/60 border border-zinc-800/70 px-4 py-2 shadow-sm g-gray-700/10 rounded-lg m-2">
+          <div className="items-center justify-items-center rounded-lg bg-zinc-900/60 border border-zinc-800/70 px-4 py-2 shadow-sm g-gray-700/10 m-2">
             <Link href={`/${hit.slug}`}>
               <div>
                 <h3 className="capitalize text-3xl font-bold">{hit.title}</h3>
