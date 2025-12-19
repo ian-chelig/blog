@@ -28,7 +28,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     });
     const res = await client.index("article").search(q, {
       limit: 20,
-      attributesToCrop: ["body:60", "description:40"],
+      attributesToCrop: ["body:35", "description:35"],
       cropMarker: "…",
       attributesToHighlight: ["body", "description", "title"],
       highlightPreTag: "<mark>",
@@ -45,11 +45,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     const bodyHasMark = body.includes("<mark>");
     const descHasMark = desc.includes("<mark>");
 
-    if (descHasMark) return desc;
     if (bodyHasMark) return body;
+    if (descHasMark) return desc;
 
     // no highlight anywhere; fall back to whatever text we have
-    return body || desc || "";
+    return desc || "";
   }
 
   return (
@@ -86,7 +86,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               </div>
               <div>
                 <p
-                  className="text-lg text-gray-500 line-clamp-3"
+                  className="text-lg text-gray-500 line-clamp-5"
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(pickSnippet(hit)),
                   }}

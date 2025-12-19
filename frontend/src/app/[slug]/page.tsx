@@ -8,9 +8,9 @@ export interface Article {
   publishedAt: Date;
 }
 import qs from "qs";
-import markdownit from 'markdown-it';
+import markdownit from "markdown-it";
 import implicitFigures from "markdown-it-implicit-figures";
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from "isomorphic-dompurify";
 import hljs from "highlight.js";
 import { notFound } from "next/navigation";
 
@@ -19,8 +19,15 @@ declare global {
 }
 
 // Define the isSpace function
-globalThis.isSpace = function(code: number): boolean {
-  return code === 0x20 || code === 0x09 || code === 0x0A || code === 0x0B || code === 0x0C || code === 0x0D;
+globalThis.isSpace = function (code: number): boolean {
+  return (
+    code === 0x20 ||
+    code === 0x09 ||
+    code === 0x0a ||
+    code === 0x0b ||
+    code === 0x0c ||
+    code === 0x0d
+  );
 };
 
 const formatDate = (date: Date) => {
@@ -33,15 +40,13 @@ const formatDate = (date: Date) => {
   return new Date(date).toLocaleDateString("en-US", options);
 };
 
-
 async function getArticle(slug: string) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:1337";
   const path = "/api/articles";
   const url = new URL(path, baseUrl);
 
-
   url.search = qs.stringify({
-    populate: '*',
+    populate: "*",
     filters: {
       slug: {
         $eq: slug,
@@ -69,19 +74,19 @@ export default async function Article({
     html: false,
     xhtmlOut: false,
     breaks: true,
-    langPrefix: 'language-',
+    langPrefix: "language-",
     linkify: true,
     typographer: true,
-    quotes: '“”‘’',
-    highlight: function(str: any, lang: any) {
+    quotes: "“”‘’",
+    highlight: function (str: any, lang: any) {
       if (lang && hljs.getLanguage(lang)) {
         try {
           return hljs.highlight(str, { language: lang }).value;
-        } catch (__) { }
+        } catch (__) {}
       }
 
-      return ''; // use external default escaping
-    }
+      return ""; // use external default escaping
+    },
   });
 
   md.use(implicitFigures, {
@@ -96,24 +101,27 @@ export default async function Article({
 
   return (
     <div>
-      <article
-        key={article.title}
-        id="content"
-      >
+      <article key={article.title} id="content">
         <div className="items-center justify-items-center rounded-lg bg-zinc-900/60 border border-zinc-800/70 px-4 py-2 shadow-sm g-gray-700/10 m-2">
-          <div><h3 className="text-3xl font-bold capitalize">{article.title}</h3></div>
-          <div><p className="text-lg text-gray-500">{article.description}</p></div>
+          <div>
+            <h3 className="text-3xl font-bold capitalize">{article.title}</h3>
+          </div>
+          <div>
+            <p className="text-lg text-gray-500">{article.description}</p>
+          </div>
           <div>
             <p className="text-sm mb-4">
               Published: {formatDate(article.publishedAt)}
             </p>
           </div>
-          <div className="max-w-5xl prose prose-theme  prose-img:mb-[-10] 
+          <div
+            className="max-w-5xl prose prose-theme  prose-img:mb-[-10] 
             prose-img:rounded-xl prose-img:mx-auto prose-figcaption:text-sm 
             prose-figcaption:text-center prose-figcaption:mb-4 prose-figcaption:text-zinc-500"
-            dangerouslySetInnerHTML={{ __html: pure }} />
+            dangerouslySetInnerHTML={{ __html: pure }}
+          />
         </div>
       </article>
     </div>
   );
-};
+}

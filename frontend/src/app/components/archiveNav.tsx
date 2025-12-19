@@ -87,13 +87,10 @@ export default async function ArchiveNav() {
   return (
     <nav
       aria-label="Archive"
-      className="rounded-xl bg-zinc-900/60 backdrop-blur border border-white/5 shadow-lg px-4 py-3 font-mono text-slate-100"
+      className="rounded-xl bg-zinc-900/60 backdrop-blur border border-white/5 shadow-lg px-4 py-3 font-mono"
     >
       <div className="mb-3 flex items-center justify-center">
-        <Link
-          href="/"
-          className="text-sm text-slate-200/90 hover:text-slate-100 transition"
-        >
+        <Link href="/" className="text-sm hover:text-gray-400 transition">
           ← Blog
         </Link>
       </div>
@@ -113,7 +110,7 @@ export default async function ArchiveNav() {
             >
               <summary className="cursor-pointer list-none select-none flex items-center justify-between text-sm tracking-wide">
                 <span>{yearNum}</span>
-                <span className="text-xs text-slate-300/80">{year.total}</span>
+                <span className="text-xs ">{year.total}</span>
               </summary>
 
               <div className="mt-2 h-px w-full bg-white/5" />
@@ -131,9 +128,7 @@ export default async function ArchiveNav() {
                       >
                         <summary className="cursor-pointer list-none flex items-center justify-between text-xs text-slate-200/90">
                           <span>{monthName(m)}</span>
-                          <span className="text-[11px] text-slate-300/70">
-                            {bucket.total}
-                          </span>
+                          <span className="text-[11px]">{bucket.total}</span>
                         </summary>
 
                         <div className="mt-1 space-y-1 pl-2">
@@ -160,7 +155,7 @@ export default async function ArchiveNav() {
                         <Link
                           key={a.slug}
                           href={`/${a.slug}`}
-                          className="block rounded-md px-2 py-1 text-sm text-slate-100/90 hover:text-slate-100 hover:bg-white/5 transition truncate"
+                          className="block rounded-md px-2 py-1 text-sm hover:text-slate-100 hover:bg-white/5 transition truncate"
                           title={`${a.title} — ${formatDateUTC(a.publishedAt)}`}
                         >
                           <li>{a.title}</li>

@@ -6,6 +6,7 @@ import ScrollToTop from "./components/scrollToTop";
 import Navbar from "./components/navbar";
 import TableOfContents from "./components/tableOfContents";
 import ArchiveNav from "./components/archiveNav";
+import Footer from "./components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
