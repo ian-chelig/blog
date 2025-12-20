@@ -27,7 +27,7 @@ export default function SearchBar() {
   }
 
   const inputClass =
-    "w-72 rounded-md border border-zinc-800 bg-zinc-950/40 px-3 py-2 pr-8 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-600/40";
+    "w-full rounded-md border border-zinc-800 bg-zinc-950/40 px-3 py-2 pr-8 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-600/40";
 
   const clearClass =
     "absolute right-2 top-1/2 -translate-y-1/2 rounded px-1 text-zinc-400 opacity-70 hover:opacity-100 hover:bg-zinc-800/60";
@@ -40,7 +40,7 @@ export default function SearchBar() {
       }}
       className="flex"
     >
-      <div className="relative">
+      <div className="w-full md:w-auto md:min-w-[18rem] relative">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}

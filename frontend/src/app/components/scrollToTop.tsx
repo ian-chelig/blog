@@ -10,17 +10,26 @@ const scrollToTop = () => {
   return (
     <div className="">
       {scrollPosition.y > 200 && (
-        <button
-          className=" hidden lg:block
-        fixed bottom-[40px] left-1/2 z-50
-        -translate-x-1/2
-        ml-[calc(24rem+0.50rem)]
-        rounded-full border border-zinc-700 bg-zinc-900/50
-        px-4 p-2 shadow hover:bg-zinc-700 transition text-2xl"
-          onClick={resetScroll}
-        >
-          ↑
-        </button>
+        <div className="hidden lg:block fixed inset-x-0 bottom-10 z-50 pointer-events-none">
+          {/* This matches your site container */}
+          <div className="mx-auto max-w-7xl px-4">
+            {/* This matches your 3-col grid; button sits in the right sidebar column */}
+            <div className="grid lg:grid-cols-[minmax(0,14rem)_minmax(0,48rem)_minmax(0,14rem)]">
+              <div />
+              <div />
+              <div className="flex justify-start lg:pl-8 md:pl-0">
+                <button
+                  type="button"
+                  onClick={resetScroll}
+                  className="pointer-events-auto rounded-full border border-zinc-700 bg-zinc-900/50 px-4 py-2 shadow hover:bg-zinc-700 transition text-2xl"
+                  aria-label="Scroll to top"
+                >
+                  ↑
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

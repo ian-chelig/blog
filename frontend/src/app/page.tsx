@@ -6,10 +6,10 @@ export default async function Page() {
   const articles = await getArticles();
 
   return (
-    <div>
+    <div className="px-2 space-y-3 min-w-full">
       {articles.map((article) => (
-        <article key={article.slug}>
-          <div className="items-center justify-items-center rounded-lg bg-zinc-900/60 border border-zinc-800/70 px-4 py-2 shadow-sm g-gray-700/10 m-2">
+        <article key={article.slug} className="w-full">
+          <div className="w-full rounded-lg bg-zinc-900/60 border border-zinc-800/70 px-4 py-2 shadow-sm">
             <Link href={`/${article.slug}`}>
               <div>
                 <h3 className="capitalize text-3xl font-bold">

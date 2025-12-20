@@ -37,11 +37,14 @@ const TableOfContents = () => {
   if (items.length === 0) return null;
 
   return (
-    <div className="rounded-lg bg-zinc-900/50 border border-zinc-800/70 p-2">
+    <div className="min-w-0 rounded-lg bg-zinc-900/50 border border-zinc-800/70 p-2">
       <ol className="list-decimal list-inside">
         {items.map((item) => (
-          <li key={item.id}>
-            <a className="capitalize hover:text-gray-400" href={`#${item.id}`}>
+          <li key={item.id} className="min-w-0">
+            <a
+              className="min-w-0 break-words inline capitalize hover:text-gray-400"
+              href={`#${item.id}`}
+            >
               {item.text}
             </a>
           </li>

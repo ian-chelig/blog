@@ -19,7 +19,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     });
     const res = await client.index("article").search(q, {
       limit: 20,
-      attributesToCrop: ["body:35", "description:35"],
+      attributesToCrop: ["body:20", "description:20"],
       cropMarker: "…",
       attributesToHighlight: ["body", "description", "title"],
       highlightPreTag: "<mark>",
