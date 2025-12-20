@@ -102,10 +102,10 @@ export default async function ArchiveNav() {
                               <Link
                                 key={a.slug}
                                 href={`/${a.slug}`}
-                                className="block text-sm text-slate-100/90 hover:text-slate-100 hover:underline underline-offset-4 truncate"
+                                className="block text-sm text-slate-100/90 hover:text-slate-100 hover:underline underline-offset-4 capitalize"
                                 title={`${a.title} — ${formatDateUTC(a.publishedAt)}`}
                               >
-                                <li>{a.title}</li>
+                                <li className="truncate">{a.title}</li>
                               </Link>
                             ))}
                           </ul>
@@ -120,10 +120,10 @@ export default async function ArchiveNav() {
                         <Link
                           key={a.slug}
                           href={`/${a.slug}`}
-                          className="block rounded-md px-2 py-1 text-sm hover:text-slate-100 hover:bg-white/5 transition truncate"
+                          className="block rounded-md px-2 py-1 text-sm hover:text-slate-100 hover:bg-white/5 transition capitalize"
                           title={`${a.title} — ${formatDateUTC(a.publishedAt)}`}
                         >
-                          <li>{a.title}</li>
+                          <li className="truncate">{a.title}</li>
                         </Link>
                       ))}
                     </ul>

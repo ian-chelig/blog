@@ -11,9 +11,7 @@ const scrollToTop = () => {
     <div className="">
       {scrollPosition.y > 200 && (
         <div className="hidden lg:block fixed inset-x-0 bottom-10 z-50 pointer-events-none">
-          {/* This matches your site container */}
           <div className="mx-auto max-w-7xl px-4">
-            {/* This matches your 3-col grid; button sits in the right sidebar column */}
             <div className="grid lg:grid-cols-[minmax(0,14rem)_minmax(0,48rem)_minmax(0,14rem)]">
               <div />
               <div />
