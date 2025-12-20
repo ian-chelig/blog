@@ -1,44 +1,10 @@
-export interface Article {
-  title: string;
-  description: string;
-  slug: string;
-  author: string;
-  category: string;
-  body: string;
-  publishedAt: Date;
-}
 import qs from "qs";
 import markdownit from "markdown-it";
 import implicitFigures from "markdown-it-implicit-figures";
 import DOMPurify from "isomorphic-dompurify";
 import hljs from "highlight.js";
 import { notFound } from "next/navigation";
-
-declare global {
-  function isSpace(code: number): boolean;
-}
-
-// Define the isSpace function
-globalThis.isSpace = function (code: number): boolean {
-  return (
-    code === 0x20 ||
-    code === 0x09 ||
-    code === 0x0a ||
-    code === 0x0b ||
-    code === 0x0c ||
-    code === 0x0d
-  );
-};
-
-const formatDate = (date: Date) => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  };
-
-  return new Date(date).toLocaleDateString("en-US", options);
-};
+import formatDate from "../lib/formatDate";
 
 async function getArticle(slug: string) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:1337";
@@ -65,9 +31,10 @@ export default async function Article({
 }: {
   params: { slug: string };
 }) {
-  const { slug } = await params;
+  let pure = "";
+  const slug = await params;
   if (!slug) notFound();
-  const article = await getArticle(slug);
+  const article = await getArticle(slug.slug);
   if (!article) notFound();
 
   const md = markdownit({
@@ -85,7 +52,7 @@ export default async function Article({
         } catch (__) {}
       }
 
-      return ""; // use external default escaping
+      return "";
     },
   });
 
@@ -93,9 +60,8 @@ export default async function Article({
     figcaption: true,
   });
 
-  let pure = "";
   if (!article.body) {
-    return;
+    notFound();
   }
   pure = DOMPurify.sanitize(md.render(article.body));
 

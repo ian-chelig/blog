@@ -1,47 +1,6 @@
 import Link from "next/link";
-
-export interface Article {
-  title: string;
-  description: string;
-  slug: string;
-  author: string;
-  category: string;
-  body: string;
-  publishedAt: string;
-}
-
-const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
-
-function formatDateUTC(input: string) {
-  const d = new Date(input);
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${m}/${day}/${y}`;
-}
-
-async function getArticles(): Promise<Article[]> {
-  const res = await fetch(
-    `${STRAPI_URL}/api/articles?populate=*&sort=publishedAt:desc`,
-    {
-      cache: "no-store",
-    },
-  );
-  const json = await res.json();
-  const data = json.data ?? [];
-  return data.map((item: any) => {
-    const a = item.attributes ?? item;
-    return {
-      title: a.title,
-      description: a.description,
-      slug: a.slug,
-      author: a.author,
-      category: a.category,
-      body: a.body,
-      publishedAt: a.publishedAt,
-    } satisfies Article;
-  });
-}
+import getArticles from "./lib/getArticles";
+import formatDateUTC from "./lib/formatDate";
 
 export default async function Page() {
   const articles = await getArticles();

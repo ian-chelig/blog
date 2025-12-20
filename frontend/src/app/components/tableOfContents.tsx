@@ -19,17 +19,13 @@ const TableOfContents = () => {
       setItems([]);
       return;
     }
-
     const headers = Array.from(content.getElementsByTagName("h1"));
-
     const next = headers
       .map((h) => {
         const text = (h.textContent ?? "").trim();
         if (!text) return null;
-
         const id = text.replaceAll(" ", "-");
         h.id = id;
-
         return { id, text };
       })
       .filter((v) => v !== null);

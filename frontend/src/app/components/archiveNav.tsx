@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Article } from "../page";
-
-const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
+import Article from "../lib/article";
+import formatDateUTC from "../lib/formatDate";
+import getArticles from "../lib/getArticles";
 
 type MonthNav = { total: number; articles: Article[] };
 type YearNav = {
@@ -17,14 +17,6 @@ function monthName(m: number) {
     month: "long",
     timeZone: "UTC",
   });
-}
-
-function formatDateUTC(input: string | Date) {
-  const d = new Date(input);
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${m}/${day}/${y}`;
 }
 
 function getArticlesByYear(articles: Article[]): YearArchiveNav {
@@ -49,35 +41,8 @@ function getArticlesByYear(articles: Article[]): YearArchiveNav {
   return output;
 }
 
-async function fetchArticles(): Promise<Article[]> {
-  const res = await fetch(
-    `${STRAPI_URL}/api/articles?populate=*&sort=publishedAt:desc`,
-    {
-      // good defaults; change if you want ISR
-      cache: "no-store",
-    },
-  );
-
-  const json = await res.json();
-
-  const data = json.data ?? [];
-
-  return data.map((item: any) => {
-    const a = item.attributes ?? item;
-    return {
-      title: a.title,
-      description: a.description,
-      slug: a.slug,
-      author: a.author,
-      category: a.category,
-      body: a.body,
-      publishedAt: a.publishedAt,
-    } satisfies Article;
-  });
-}
-
 export default async function ArchiveNav() {
-  const articles = await fetchArticles();
+  const articles = await getArticles();
   const navMap = getArticlesByYear(articles);
 
   const yearsDesc = Object.keys(navMap)

@@ -1,19 +1,10 @@
 import { MeiliSearch } from "meilisearch";
 import DOMPurify from "isomorphic-dompurify";
 import Link from "next/link";
+import formatDate from "../lib/formatDate";
 
 type SearchPageProps = {
   searchParams: Promise<{ q?: string }>;
-};
-
-const formatDate = (date: Date) => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  };
-
-  return new Date(date).toLocaleDateString("en-US", options);
 };
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
@@ -41,14 +32,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   function pickSnippet(hit: any): string {
     const body = hit?._formatted?.body ?? "";
     const desc = hit?._formatted?.description ?? "";
-
     const bodyHasMark = body.includes("<mark>");
     const descHasMark = desc.includes("<mark>");
 
     if (bodyHasMark) return body;
     if (descHasMark) return desc;
-
-    // no highlight anywhere; fall back to whatever text we have
     return desc || "";
   }
 

@@ -9,7 +9,7 @@
 
 @layer base {
   mark {
-    @apply bg-amber-400/15 text-inherit rounded-sm px-0.5;
+    @apply bg-zinc-300/15 text-inherit rounded-sm px-0.5;
   }
 }
 
