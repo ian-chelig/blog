@@ -67,7 +67,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       ) : null}
       {hits.map((hit) => (
         <article key={hit.id ?? hit.slug}>
-          <div className="items-center justify-items-center rounded-lg bg-zinc-900/60 border border-zinc-800/70 px-4 py-2 shadow-sm g-gray-700/10 m-2">
+          <div className="items-center justify-items-center rounded-lg bg-zinc-900/60 border border-zinc-800/70 px-4 py-2 shadow-sm m-2">
             <Link href={`/${hit.slug}`}>
               <div>
                 <h3 className="capitalize text-3xl font-bold">{hit.title}</h3>
