@@ -36,7 +36,7 @@ export default function RootLayout({
           <Navbar />
           <main className="flex-1">
             <div className="mx-auto max-w-7xl w-full px-4 pt-4 pb-8">
-              <div className="grid grid-cols-1 gap-0 lg:grid-cols-[minmax(0,14rem)_minmax(0,50rem)_minmax(0,14rem)]">
+              <div className="grid grid-cols-1 gap-0 lg:grid-cols-[minmax(0,16rem)_minmax(0,46rem)_minmax(0,16rem)]">
                 <aside className="hidden lg:block lg:order-1 lg:sticky lg:top-5 h-fit min-w-0">
                   <ArchiveNav />
                 </aside>

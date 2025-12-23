@@ -12,10 +12,10 @@ const scrollToTop = () => {
       {scrollPosition.y > 200 && (
         <div className="hidden lg:block fixed inset-x-0 bottom-10 z-50 pointer-events-none">
           <div className="mx-auto max-w-7xl px-4">
-            <div className="grid lg:grid-cols-[minmax(0,14rem)_minmax(0,48rem)_minmax(0,14rem)]">
+            <div className="grid lg:grid-cols-[minmax(0,16rem)_minmax(0,46rem)_minmax(0,16rem)]">
               <div />
               <div />
-              <div className="flex justify-start lg:pl-8 md:pl-0">
+              <div className="flex justify-start md:pl-0">
                 <button
                   type="button"
                   onClick={resetScroll}

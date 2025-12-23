@@ -5,6 +5,7 @@ import DOMPurify from "isomorphic-dompurify";
 import hljs from "highlight.js";
 import { notFound } from "next/navigation";
 import formatDate from "../lib/formatDate";
+import iterator from "markdown-it-for-inline";
 
 // Define isSpace function globally for markdown-it
 declare global {
@@ -73,6 +74,13 @@ export default async function Article({
     },
   });
 
+  md.use(iterator, "url_new_win", "link_open", (tokens: any[], idx: number) => {
+    const token = tokens[idx];
+
+    token.attrSet("target", "_blank");
+    token.attrSet("rel", "noopener noreferrer");
+  });
+
   md.use(implicitFigures, {
     figcaption: true,
   });
@@ -80,7 +88,10 @@ export default async function Article({
   if (!article.body) {
     notFound();
   }
-  pure = DOMPurify.sanitize(md.render(article.body));
+  pure = DOMPurify.sanitize(md.render(article.body), {
+    ADD_ATTR: ["target", "rel"],
+    ADD_TAGS: ["a"],
+  });
 
   return (
     <div className="px-2 space-y-3 min-w-full">
@@ -100,7 +111,8 @@ export default async function Article({
           <div
             className="max-w-5xl prose prose-theme  prose-img:mb-[-10] 
             prose-img:rounded-xl prose-img:mx-auto prose-figcaption:text-sm 
-            prose-figcaption:text-center prose-figcaption:mb-4 prose-figcaption:text-zinc-500"
+            prose-figcaption:text-center prose-figcaption:mb-4 prose-figcaption:text-zinc-500
+            prose-h1:font-3xl prose-a:content-[attr(className:)]"
             dangerouslySetInnerHTML={{ __html: pure }}
           />
         </div>
