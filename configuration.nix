@@ -1,0 +1,64 @@
+ {
+  lib,
+  modulesPath,
+  pkgs,
+  ...
+}:
+
+{
+
+  imports =
+    [
+      ./networking.nix
+    ]
+    # Required for Digital Ocean droplets.
+    ++ lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix
+    ++ [
+      (modulesPath + "/virtualisation/digital-ocean-config.nix")
+    ];
+
+  nix.settings = {
+    # NOTE: Enable this if you want to allow deploying
+    # via sudoers!
+    trusted-users = [
+      "@wheel" # Allow sudoers to push Nix closures.
+    ];
+    # Enable flakes.
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
+
+  # Set your default locale, as you wish.
+  i18n.defaultLocale = "C.UTF-8";
+
+  # System-wide packages.
+  environment.systemPackages = with pkgs; [
+    hyfetch # Fetch to show our system is working.
+    neovim # Change to your favourite tiny text editor.
+  ];
+
+  users.users.daisy = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    openssh = {
+      # NOTE: Change this to whatever public key you use!
+      authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINFs2mr6UYCjEtcP0DwBKd2lIAx/McPLF5kX5kpikfZy daisy@unwound"
+      ];
+    };
+  };
+
+  # Passwordless sudo.
+  # WARNING!
+  # If you decide to change this, remember you NEED to set a password
+  # for the chosen user with an "authorizedKeys" setting. Passwords are
+  # public in the nix store, so know what you're doing!
+  security.sudo.wheelNeedsPassword = false;
+
+  # Set this to whichever system state version you're installing now.
+  # Afterwards, don't change this lightly. It doesn't need to change to
+  # upgrade.
+  system.stateVersion = "25.05";
+}
