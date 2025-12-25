@@ -1,10 +1,10 @@
 "use client";
 
 import MeiliSearch from "meilisearch";
-import DOMPurify from "isomorphic-dompurify";
 import Link from "next/link";
 import formatDate from "../lib/formatDate";
 import sanitizeHtml from "sanitize-html";
+import getHits from "../lib/getHits";
 
 type SearchPageProps = {
   searchParams: Promise<{ q?: string }>;
@@ -13,25 +13,7 @@ type SearchPageProps = {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q } = await searchParams;
   const query = q ?? "";
-
-  const hits: any[] = await (async () => {
-    if (!query) return [];
-    const client = new MeiliSearch({
-      host: process.env.MEILI_HOST ?? "http://localhost:7700",
-      apiKey: process.env.MEILI_MASTER_KEY ?? "aSampleMasterKey", // server-only, NOT NEXT_PUBLIC
-    });
-    const res = await client.index("article").search(q, {
-      limit: 20,
-      attributesToCrop: ["body:20", "description:20"],
-      cropMarker: "…",
-      attributesToHighlight: ["body", "description", "title"],
-      highlightPreTag: "<mark>",
-      highlightPostTag: "</mark>",
-      attributesToSearchOn: ["title", "body", "description"],
-    });
-    return res.hits as any[];
-  })();
-
+  const hits = await getHits(query);
   function pickSnippet(hit: any): string {
     const body = hit?._formatted?.body ?? "";
     const desc = hit?._formatted?.description ?? "";

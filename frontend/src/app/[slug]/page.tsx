@@ -2,7 +2,6 @@ import qs from "qs";
 import markdownit from "markdown-it";
 import implicitFigures from "markdown-it-implicit-figures";
 import iterator from "markdown-it-for-inline";
-import DOMPurify from "isomorphic-dompurify";
 import hljs from "highlight.js";
 import { notFound } from "next/navigation";
 import formatDate from "../lib/formatDate";
@@ -26,7 +25,7 @@ globalThis.isSpace = function (code: number): boolean {
 };
 
 async function getArticle(slug: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:1337";
+  const baseUrl = process.env.STRAPI_URL ?? "http://localhost:1337";
   const path = "/api/articles";
   const url = new URL(path, baseUrl);
 
