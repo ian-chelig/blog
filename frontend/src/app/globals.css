@@ -52,6 +52,6 @@
 body {
   background: linear-gradient(to bottom, #36404a, #29323c);
   color: var(--foreground);
-  font-family: var(--font-geist-mono), var(--font-geist-mono),
-    var(--font-geist-sans);
+  /* font-family: var(--font-geist-mono), var(--font-geist-mono), */
+  /* var(--font-geist-sans); */
 }

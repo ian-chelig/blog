@@ -2,6 +2,7 @@
   lib,
   modulesPath,
   pkgs,
+ self,
   ...
 }:
 
@@ -35,8 +36,10 @@
 
   # System-wide packages.
   environment.systemPackages = with pkgs; [
-    hyfetch # Fetch to show our system is working.
     neovim # Change to your favourite tiny text editor.
+    arion
+    docker-client
+    self.packages.${system}.blogServerRunnable
   ];
 
   users.users.daisy = {
@@ -49,6 +52,65 @@
       ];
     };
   };
+
+   #fail2ban
+     services.fail2ban = {
+    enable = true;
+   # Ban IP after 5 failures
+    maxretry = 5;
+    ignoreIP = [
+      # Whitelist some subnets
+    ];
+    bantime = "24h"; # Ban IPs for one day on the first ban
+    bantime-increment = {
+      enable = true; # Enable increment of bantime after each violation
+      formula = "ban.Time * math.exp(float(ban.Count+1)*banFactor)/math.exp(1*banFactor)";
+      maxtime = "168h"; # Do not ban for more than 1 week
+      overalljails = true; # Calculate the bantime based on all the violations
+    };
+  };
+
+   #docker config
+   virtualisation = {
+    docker.enable = true;
+    arion = {backend = "docker";};
+  };
+
+   #strapi config
+  virtualisation.arion.projects.strapi.settings = let
+    appdir = "/docker/appdata/";
+    env = {
+      PUID = "1000";
+      PGID = "1000";
+      TZ = "America/Chicago";
+      NODE_ENV = "development";
+    };
+
+    restart = "unless-stopped";
+  in {
+    config.services.strapi.service = {
+      useHostStore = true;
+      restart = restart;
+      image = "vshadbolt/strapi:5.33.0";
+      environment = env;
+      volumes = [(appdir + "strapi:/config") (appdir + "app:/srv/app")];
+      ports = ["1337:1337"];
+    };
+     };
+
+   #meilisearch config
+   services.meilisearch.enable = true;
+   services.meilisearch.masterKeyFile = "/secrets/meilisearch.key";
+   services.meilisearch.listenAddress = "0.0.0.0";
+
+   #systemd unit for frontend
+   systemd.services.blogServer = {
+    enable = true;
+     wantedBy = ["network.target"];
+    serviceConfig = {
+     ExecStart = "${self.packages.x86_64-linux.blogServerRunnable}/bin/run";
+    };
+   };
 
   # Passwordless sudo.
   # WARNING!

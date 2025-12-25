@@ -11,6 +11,15 @@
   "dependencies": {
     "@fortawesome/react-fontawesome": "^3.1.1",
     "@meilisearch/instant-meilisearch": "^0.29.0",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^20",
+    "@types/qs": "^6.14.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/rss": "^0.0.32",
+    "@types/sanitize-html": "^2.16.0",
     "dom-parser": "^1.1.5",
     "highlight.js": "^11.11.1",
     "instantsearch.css": "^8.9.0",
@@ -19,19 +28,19 @@
     "markdown-it-for-inline": "^2.0.1",
     "markdown-it-implicit-figures": "^0.12.0",
     "next": "15.4.6",
+    "node2nix": "^1.11.0",
+    "postcss-selector-parser": "^7.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
     "react-instantsearch": "^7.21.0",
-    "rss": "^1.2.2"
+    "rss": "^1.2.2",
+    "sanitize-html": "^2.17.0",
+    "tapable": "^2.3.0",
+    "typescript": "^5.9.3",
+    "undici": "^7.16.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@tailwindcss/typography": "^0.5.19",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "tailwindcss": "^4.1.18"
   }
 }

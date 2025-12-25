@@ -1,6 +1,11 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/6eac218f2d3dfe6c09aaf61a5bfa09d8aa396129";
+    arion = {
+      url = "github:hercules-ci/arion";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    node2nix.url = "github:svanderburg/node2nix";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixos-generator = {
       url = "github:nix-community/nixos-generators/d002ce9b6e7eb467cd1c6bb9aef9c35d191b5453";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -9,7 +14,7 @@
     devshell.url = "github:numtide/devshell";
   };
   outputs =
-    { self, nixpkgs, colmena, devshell, ... }@flakeInputs:
+    { self, nixpkgs, colmena, devshell, arion, node2nix, ... }@flakeInputs:
     let
       system = "x86_64-linux";
       modules = [
@@ -33,16 +38,23 @@
           jq
           fnm
           colmena.packages.${system}.colmena
+          node2nix.packages.${system}.node2nix
+
 ];
     in
       with pkgs;
     {
+
 colmenaHive = colmena.lib.makeHive {
       meta = {
         nixpkgs = import nixpkgs {
           system = "x86_64-linux";
           overlays = [];
         };
+              specialArgs = {
+      inherit self;
+      # or: packages = self.packages.x86_64-linux;
+    };
       };
 
       blogServer = {
@@ -50,10 +62,64 @@ colmenaHive = colmena.lib.makeHive {
           targetHost = "colmena.blogServer"; # <- defined in ~/.ssh/config
             targetUser = "daisy";
         };
-        imports = [ ./configuration.nix ];
+        imports = [ ./configuration.nix arion.nixosModules.arion ];
       };
     };
       packages.${system} = {
+        blogServerRunnable = writeShellApplication {
+                    name = "run";
+                    text = ''
+                      cd ${self.packages.${system}.blogServer}
+                      ${pkgs.nodejs}/bin/node ${self.packages.${system}.blogServer}/standalone/server.js
+                    '';
+
+                    meta = {
+                      mainProgram = "run";
+                      description = "Run nextjs project";
+                    };
+
+                  };
+
+        blogServer = let 
+          nodeDependencies = (pkgs.callPackage ./frontend/default.nix {}).nodeDependencies;
+    in
+    pkgs.stdenv.mkDerivation {
+  pname = "blogServer";
+  version = "1.0.0";
+
+  # Source code of your project
+  src = ./frontend;
+  nativeBuildInputs = [ pkgs.nodejs pkgs.typescript ];
+
+  buildPhase = ''
+    ln -s ${nodeDependencies}/lib/node_modules ./node_modules
+    export PATH="${nodeDependencies}/bin:$PATH"
+
+    # Build the Next.js app
+    npm run build
+  '';
+
+  installPhase = ''
+    mkdir -p $out
+    cp -r .next/standalone $out/
+    cp -r .next/static $out/standalone/.next
+  '';
+
+  # Run command when invoking the package
+  # Mirrors the Docker CMD ["node", "server.js"]
+  shellHook = ''
+    export NODE_ENV=production
+    export HOSTNAME=0.0.0.0
+  '';
+
+  # Metadata
+  meta = with pkgs.lib; {
+    description = "Next.js application packaged with Nix";
+    license = licenses.mit;
+    maintainers = [ ];
+  };
+      };
+
         digitalOceanVM = flakeInputs.nixos-generator.nixosGenerate {
           inherit system;
           inherit modules;
@@ -71,7 +137,7 @@ colmenaHive = colmena.lib.makeHive {
           {
             # name of the dev shell
             # For more info https://github.com/numtide/devshell/blob/main/docs/src/modules_schema.md
-            name = (builtins.fromJSON (builtins.readFile "${self}/package.json")).name + " devshell";
+            name = "devshell";
             packages = packages;
 
             # use FNM in setup hooks so the user has access to the right node version
@@ -86,28 +152,6 @@ colmenaHive = colmena.lib.makeHive {
               }
               {
                 package = lazygit;
-                category = "Dev Tools";
-              }
-              {
-                package = (
-                  writeShellApplication {
-                    name = "pr";
-                    text = ''
-                      echo "vvvvvvvvvvvv-Click-Me-vvvvvvvvvvvvvv"
-                      echo ""
-                      echo "$(git config --get remote.origin.url)/pullrequestcreate?sourceRef=$(git branch --show-current)&targetRef=main" |  sed "s/\/[a-zA-Z].*@/\//";
-                      echo ""
-                      echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-                    '';
-
-                    meta = {
-                      mainProgram = "pr";
-                      description = "Create pull request";
-                    };
-
-                  }
-                );
-
                 category = "Dev Tools";
               }
               {
@@ -131,80 +175,56 @@ colmenaHive = colmena.lib.makeHive {
               {
                 package = (
                   writeShellApplication {
+                    name = "build";
+                    text = ''
+                      nix build .#blogServer
+                    '';
+
+                    meta = {
+                      mainProgram = "build";
+                      description = "Build nextjs frontend";
+                    };
+
+                  }
+                );
+
+                category = "Build Tools";
+              }
+              {
+                package = (
+                  writeShellApplication {
+                    name = "build-image";
+                    text = ''
+                      nix build .#digitalOceanVM
+                    '';
+
+                    meta = {
+                      mainProgram = "build-image";
+                      description = "Build digital ocean droplet image";
+                    };
+
+                  }
+                );
+
+                category = "Build Tools";
+              }
+              {
+                package = (
+                  writeShellApplication {
                     name = "run";
                     text = ''
-                      if [ -d "$(git rev-parse --show-toplevel)/node_modules" ]; then
-                        npm start;
-                      else
-                        npm i;
-                      fi
+                      nix run .#blogServerRunnable
                     '';
 
                     meta = {
                       mainProgram = "run";
-                      description = "(Project Alias) Start developing the project";
+                      description = "Run nextjs frontend";
                     };
 
                   }
                 );
 
                 category = "Dev Tools";
-              }
-              {
-                package = writeShellApplication {
-                  name = "incrvers";
-                  text = ''
-                    # @describe increment the version in a package.json according to semantic versioning rules and optionally commit package.json
-
-                    # @cmd Increment major version
-                    # @alias M
-                    major() {
-                      VERSION=$(getCurrentVersion)
-                      NEW_VERSION=$(echo "$VERSION" | awk -F. '{$1++; $2=0; $3=0; print $1"."$2"."$3}')
-                      echo "New major version: $NEW_VERSION"
-                      writeNewVersion "$NEW_VERSION"
-                    }
-
-                    # @cmd Increment minor version
-                    # @alias m
-                    minor() {
-                      VERSION=$(getCurrentVersion)
-                      NEW_VERSION=$(echo "$VERSION" | awk -F. '{$2++; $3=0; print $1"."$2"."$3}')
-                      echo "New minor version: $NEW_VERSION"
-                    }
-
-                    # @cmd Increment patch version
-                    # @alias p
-                    patch() {
-                      VERSION=$(getCurrentVersion)
-                      NEW_VERSION=$(echo "$VERSION" | awk -F. '{$3++; print $1"."$2"."$3}')
-                      echo "New patch version: $NEW_VERSION"
-                    }
-
-                    writeNewVersion() {
-                      jq ".version = \"$1\"" "$(git rev-parse --show-toplevel)/package.json" | ${moreutils}/bin/sponge "$(git rev-parse --show-toplevel)/package.json"
-                      SHOULDCOMMIT=$(printf "Yes\nNo" | ${pkgs.fzf}/bin/fzf --prompt="Commit package.json?> ")
-                      case $SHOULDCOMMIT in
-                        "Yes")
-                          git add package.json
-                          git commit -m "chore: Increment version to $1"
-                        ;;
-                      esac
-
-                    }
-
-                    getCurrentVersion() {
-                      jq -r '.version' "$(git rev-parse --show-toplevel)/package.json"
-                    }
-
-                    eval "$(${pkgs.argc}/bin/argc --argc-eval "$0" "$@")"
-                  '';
-
-                  meta = {
-                    mainProgram = "incrvers";
-                    description = "Increment version in package.json according to semver and optionally make a commit";
-                  };
-                };
               }
               {
                 category = "Repo Tools";
@@ -234,34 +254,6 @@ colmenaHive = colmena.lib.makeHive {
 
                 };
               }
-              {
-                category = "Repo Tools";
-                package = writeShellApplication {
-                  name = "auth";
-                  text = ''
-                    pushd "$(git rev-parse --show-toplevel)"
-                    eval "$(${fnm}/bin/fnm env)"
-
-                    ${fnm}/bin/fnm use
-
-                    set +e
-                    npx better-vsts-npm-auth
-
-                    if [[ $? -eq 1 ]]; then
-                      echo "ATTENTION: If this is your first time authenticating then please follow the instructions at this link: https://stateless-vsts-oauth.azurewebsites.net"
-                    fi
-
-                    popd
-                  '';
-
-                  meta = {
-                    mainProgram = "auth";
-                    description = "(Project Alias) authenticate with azure node repository";
-                  };
-
-                };
-              }
-
             ];
           }
         );

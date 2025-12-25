@@ -17,8 +17,6 @@ export default async function getArticles(): Promise<Article[]> {
       title: a.title,
       description: a.description,
       slug: a.slug,
-      author: a.author,
-      category: a.category,
       body: a.body,
       publishedAt: a.publishedAt,
     } satisfies Article;

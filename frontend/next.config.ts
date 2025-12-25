@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-
+  // Frontend docker images
+  output: "standalone",
   // Allow images from localhost
   images: {
     domains: ["localhost"],

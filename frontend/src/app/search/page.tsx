@@ -1,7 +1,10 @@
-import { MeiliSearch } from "meilisearch";
+"use client";
+
+import MeiliSearch from "meilisearch";
 import DOMPurify from "isomorphic-dompurify";
 import Link from "next/link";
 import formatDate from "../lib/formatDate";
+import sanitizeHtml from "sanitize-html";
 
 type SearchPageProps = {
   searchParams: Promise<{ q?: string }>;
@@ -76,7 +79,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 <p
                   className="text-lg text-gray-500 line-clamp-5"
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(pickSnippet(hit)),
+                    __html: sanitizeHtml(pickSnippet(hit)),
                   }}
                 />
               </div>

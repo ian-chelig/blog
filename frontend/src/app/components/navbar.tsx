@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { FaRss } from "react-icons/fa";
 import SearchBar from "./searchBar";
 
@@ -71,7 +71,9 @@ const Navbar = () => {
           </a>
 
           <div className="w-full md:w-auto md:min-w-[18rem]">
-            <SearchBar />
+            <Suspense fallback={null}>
+              <SearchBar />
+            </Suspense>
           </div>
         </div>
 

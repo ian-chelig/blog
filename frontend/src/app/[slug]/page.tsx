@@ -1,11 +1,12 @@
 import qs from "qs";
 import markdownit from "markdown-it";
 import implicitFigures from "markdown-it-implicit-figures";
+import iterator from "markdown-it-for-inline";
 import DOMPurify from "isomorphic-dompurify";
 import hljs from "highlight.js";
 import { notFound } from "next/navigation";
 import formatDate from "../lib/formatDate";
-import iterator from "markdown-it-for-inline";
+import sanitizeHtml from "sanitize-html";
 
 // Define isSpace function globally for markdown-it
 declare global {
@@ -47,12 +48,12 @@ async function getArticle(slug: string) {
 export default async function Article({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   let pure = "";
-  const slug = await params;
+  const { slug } = await params;
   if (!slug) notFound();
-  const article = await getArticle(slug.slug);
+  const article = await getArticle(slug);
   if (!article) notFound();
 
   const md = markdownit({
@@ -63,13 +64,13 @@ export default async function Article({
     linkify: true,
     typographer: true,
     quotes: "“”‘’",
-    highlight: function (str: any, lang: any) {
+    highlight: function (str: string, lang: string) {
       if (lang && hljs.getLanguage(lang)) {
         try {
-          return hljs.highlight(str, { language: lang }).value;
-        } catch (__) {}
+          return hljs.highlight(str, { language: lang, ignoreIllegals: true })
+            .value;
+        } catch (_) {}
       }
-
       return "";
     },
   });
@@ -88,9 +89,16 @@ export default async function Article({
   if (!article.body) {
     notFound();
   }
-  pure = DOMPurify.sanitize(md.render(article.body), {
-    ADD_ATTR: ["target", "rel"],
-    ADD_TAGS: ["a"],
+  pure = sanitizeHtml(md.render(article.body), {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+      "img",
+      "figure",
+      "figcaption",
+    ]),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      a: ["href", "target", "rel"],
+    },
   });
 
   return (

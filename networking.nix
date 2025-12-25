@@ -15,8 +15,13 @@
     settings.PasswordAuthentication = false;
   };
 
+  # Block all ICMP requests
+  networking.firewall.allowPing = false;
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [
     22 # SSH. Feel free to use a different port.
+    1337
+    7700
+    3000
   ];
 }
