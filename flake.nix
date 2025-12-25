@@ -175,6 +175,25 @@ colmenaHive = colmena.lib.makeHive {
               {
                 package = (
                   writeShellApplication {
+                    name = "generate-dependencies";
+                    text = ''
+                      cd "$(${pkgs.git}/bin/git rev-parse --show-toplevel)/frontend"
+                      node2nix -i package.json -l package-lock.json
+                    '';
+
+                    meta = {
+                      mainProgram = "generate-dependencies";
+                      description = "Generate node2nix package dependencies";
+                    };
+
+                  }
+                );
+
+                category = "Build Tools";
+              }
+              {
+                package = (
+                  writeShellApplication {
                     name = "build";
                     text = ''
                       nix build .#blogServer
