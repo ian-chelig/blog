@@ -93,13 +93,23 @@ export default async function Article({
       "img",
       "figure",
       "figcaption",
+      "pre",
+      "code",
+      "span",
     ]),
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
       a: ["href", "target", "rel"],
+      pre: ["class"],
+      code: ["class"],
+      span: ["class"],
+    },
+    allowedClasses: {
+      pre: ["hljs"],
+      code: ["hljs"],
+      span: [/^hljs-/],
     },
   });
-
   return (
     <div className="px-2 space-y-3 min-w-full">
       <article key={article.title} id="content" className="w-full">
