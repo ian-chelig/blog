@@ -143,6 +143,7 @@
     environment = {
       STRAPI_URL = "http://localhost:1337";
       MEILI_HOST = "http://localhost:7700";
+      NEXT_PUBLIC_SITE_URL = "https://ianmadeit.org";
     };
     serviceConfig = {
       ExecStart = "${self.packages.x86_64-linux.blogServerRunnable}/bin/run";
