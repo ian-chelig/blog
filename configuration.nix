@@ -91,12 +91,6 @@
           forceSSL = true;
           locations."/".proxyPass = "http://localhost:1337"; # default Strapi port
         };
-
-        "meilisearch.ianmadeit.org" = {
-          enableACME = true;
-          forceSSL = true;
-          locations."/".proxyPass = "http://localhost:7700"; # default Meilisearch port
-        };
       };
     };
   };
