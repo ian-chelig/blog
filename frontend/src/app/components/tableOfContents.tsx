@@ -42,7 +42,7 @@ const TableOfContents = () => {
         {items.map((item) => (
           <li key={item.id} className="min-w-0">
             <a
-              className="min-w-0 break-words inline capitalize hover:text-gray-400"
+              className="min-w-0 wrap-break-word inline capitalize hover:text-gray-400"
               href={`#${item.id}`}
             >
               {item.text}

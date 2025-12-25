@@ -1,10 +1,12 @@
 import MeiliSearch from "meilisearch";
+import fs from "fs";
 
 export default async function hits(query: string) {
   if (!query) return [];
+  const key = fs.readFileSync("/secrets/meilisearch.key", "utf-8").trim();
   const client = new MeiliSearch({
-    host: process.env.MEILI_HOST ?? "http://localhost:7700",
-    apiKey: process.env.MEILI_MASTER_KEY ?? "aSampleMasterKey", // server-only, NOT NEXT_PUBLIC
+    host: process.env.MEILI_HOST!,
+    apiKey: key!, // server-only, NOT NEXT_PUBLIC
   });
   const res = await client.index("article").search(query, {
     limit: 20,

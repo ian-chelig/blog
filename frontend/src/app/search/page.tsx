@@ -1,6 +1,3 @@
-"use client";
-
-import MeiliSearch from "meilisearch";
 import Link from "next/link";
 import formatDate from "../lib/formatDate";
 import sanitizeHtml from "sanitize-html";

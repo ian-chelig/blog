@@ -1,4 +1,4 @@
- { ... }:
+{ ... }:
 
 {
   networking = {
@@ -20,8 +20,10 @@
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [
     22 # SSH. Feel free to use a different port.
+    80
+    443
     1337
-    7700
     3000
+    7700
   ];
 }

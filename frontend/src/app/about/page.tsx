@@ -4,7 +4,11 @@ export default function page() {
       <div className="space-y-4 text-zinc-200 text-sm leading-relaxed">
         <h2 className="text-xl font-semibold mb-1">About</h2>
         <p>
-          I'm a long-time Linux user and enthusiast. Throughout the years I've spent time exploring the worlds of system administration, networking and system internals via experiments run on a self-hosted lab (that even hosts this site)! I'm looking to begin my career in IT. This site will serve as a documentation of the projects I embark on due to that.
+          I'm a long-time Linux user and enthusiast. Throughout the years I've
+          spent time exploring the worlds of system administration, networking
+          and system internals via experiments run on a self-hosted lab (that
+          even hosts this site)! I'm looking to begin my career in IT. This site
+          will serve as a documentation of the projects I embark on due to that.
         </p>
 
         <h2 className="text-lg font-semibold mb-1">Skills</h2>
