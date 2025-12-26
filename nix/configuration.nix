@@ -10,6 +10,7 @@
 
   imports = [
     ./networking.nix
+    ./wireguard.nix
   ]
   # Required for Digital Ocean droplets.
   ++ lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix

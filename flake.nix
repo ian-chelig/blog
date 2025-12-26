@@ -31,7 +31,7 @@
           nix.registry.nixpkgs.flake = nixpkgs;
           virtualisation.diskSize = 8 * 1024; # 8GiB
         }
-        ./configuration.nix
+        ./nix/configuration.nix
       ];
       pkgs = import nixpkgs {
         inherit system;
@@ -72,7 +72,7 @@
             targetUser = "daisy";
           };
           imports = [
-            ./configuration.nix
+            ./nix/configuration.nix
             arion.nixosModules.arion
           ];
         };
