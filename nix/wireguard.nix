@@ -22,13 +22,19 @@ in
         {
           #portal
           publicKey = "FuP5NEpKryk0U5t5LFTg2/egH8CHrZZGpgwEEyU5cWA=";
-          allowedIPs = [ "10.200.0.2/32" ];
+          allowedIPs = [ "10.200.0.2/32" "192.168.168.0/24" ];
           persistentKeepalive = 25;
         }
         {
           #daisy phone
           publicKey = "sVskIQKeDdey9m4wMap/imWJV/Kw59jw2RpSKUXIcVU=";
           allowedIPs = [ "10.200.0.3/32" ];
+          persistentKeepalive = 25;
+        }
+        {
+          #Nathan
+          publicKey = "5NpYXWHNA9eJYH9x4bdFq4+Zsxl37Lux58rkfYDFFEY=";
+          allowedIPs = [ "10.200.0.4/32" ];
           persistentKeepalive = 25;
         }
       ];
