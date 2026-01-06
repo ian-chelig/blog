@@ -94,9 +94,9 @@
                 destDir = "/secrets"; # Default: /run/keys
                 uploadAt = "pre-activation";
               };
-              ".env" = {
-                keyFile = "/home/daisy/secrets/strapi/.env";
-                destDir = "/docker/appdata/app"; # Default: /run/keys
+              "strapi.env" = {
+                keyFile = "/home/daisy/secrets/strapi/strapi.env";
+                destDir = "/secrets/strapi"; # Default: /run/keys
                 uploadAt = "pre-activation";
               };
             };
