@@ -8,15 +8,16 @@
 
 {
 
-  imports = [
-    ./networking.nix
-    ./wireguard.nix
-  ]
-  # Required for Digital Ocean droplets.
-  ++ lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix
-  ++ [
-    (modulesPath + "/virtualisation/digital-ocean-config.nix")
-  ];
+  imports =
+    [
+      ./networking.nix
+      ./wireguard.nix
+    ]
+    # Required for Digital Ocean droplets.
+    ++ lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix
+    ++ [
+      (modulesPath + "/virtualisation/digital-ocean-config.nix")
+    ];
 
   nix.settings = {
     # NOTE: Enable this if you want to allow deploying
@@ -81,16 +82,62 @@
     nginx = {
       enable = true;
       virtualHosts = {
-        "ianmadeit.org" = {
-          enableACME = true;
-          serverAliases = [ "www.ianmadeit.org" ];
-          forceSSL = true;
-          locations."/".proxyPass = "http://localhost:3000";
-        };
         "strapi.ianmadeit.org" = {
-          enableACME = true;
           forceSSL = true;
-          locations."/".proxyPass = "http://localhost:1337"; # default Strapi port
+          useACMEHost = "ianmadeit.org";
+          locations."/" = {
+            proxyPass = "http://localhost:1337"; # default Strapi port
+            extraConfig = ''
+              allow 10.200.0.0/24;
+              allow 192.168.168.0/24;
+              deny all;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+            '';
+          };
+        };
+
+        "organizr.ianmadeit.org" = {
+          forceSSL = true;
+          useACMEHost = "ianmadeit.org";
+          locations."/" = {
+            proxyPass = "http://10.200.0.2:8080"; # default Strapi port
+            extraConfig = ''
+              allow 10.200.0.0/24;
+              allow 192.168.168.0/24;
+              deny all;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+            '';
+          };
+        };
+        "ianmadeit.org" = {
+          serverAliases = [ "www.ianmadeit.org" ];
+          useACMEHost = "ianmadeit.org";
+          forceSSL = true;
+          locations."/" = {
+            proxyPass = "http://localhost:3000";
+          };
+        };
+        "*.ianmadeit.org" = {
+          forceSSL = true;
+          useACMEHost = "ianmadeit.org";
+          locations."/" = {
+            proxyPass = "https://10.200.0.2:9443"; # authentik
+            extraConfig = ''
+              allow 10.200.0.0/24;
+              allow 192.168.168.0/24;
+              deny all;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+            '';
+          };
         };
       };
     };
@@ -112,7 +159,10 @@
         PUID = "1000";
         PGID = "1000";
         TZ = "America/Chicago";
-        NODE_ENV = "development";
+        NODE_ENV = "production";
+        HOST = "0.0.0.0";
+        PUBLIC_URL = "https://strapi.ianmadeit.org";
+        STRAPI_DISABLE_ADMIN_BUILD = "true";
       };
 
       restart = "unless-stopped";
@@ -124,10 +174,14 @@
         image = "vshadbolt/strapi:5.33.0";
         environment = env;
         volumes = [
+          # (appdir + "./config/admin.js:/srv/app/admin/admin.js:ro")
+          # (appdir + "./config/vite.js:/srv/app/admin/vite.config.js:ro")
           (appdir + "strapi:/config")
           (appdir + "app:/srv/app")
         ];
+        entrypoint = "/srv/app/start.sh";
         ports = [ "127.0.0.1:1337:1337" ];
+        network_mode = "host";
       };
     };
 
@@ -148,9 +202,21 @@
   security.acme = {
     # Accept the CA’s terms of service. The default provider is Let’s Encrypt, you can find their ToS at https://letsencrypt.org/repository/.
     acceptTerms = true;
-    # Optional: You can configure the email address used with Let's Encrypt.
-    # This way you get renewal reminders (automated by NixOS) as well as expiration emails.
-    defaults.email = "ianm.chelig@gmail.com";
+    defaults = {
+      # Optional: You can configure the email address used with Let's Encrypt.
+      # This way you get renewal reminders (automated by NixOS) as well as expiration emails.
+      email = "ianm.chelig@gmail.com";
+      group = "nginx";
+    };
+    certs."ianmadeit.org" = {
+      domain = "ianmadeit.org";
+      extraDomainNames = [ "*.ianmadeit.org" ];
+      # Specify DNS-01
+      dnsProvider = "digitalocean";
+      credentialFiles = {
+        "DO_AUTH_TOKEN_FILE" = "/secrets/digitalocean.key";
+      };
+    };
   };
 
   # Passwordless sudo.
@@ -163,5 +229,5 @@
   # Set this to whichever system state version you're installing now.
   # Afterwards, don't change this lightly. It doesn't need to change to
   # upgrade.
-  system.stateVersion = "25.05";
+  system.stateVersion = "25.11";
 }

@@ -32,6 +32,9 @@
           virtualisation.diskSize = 8 * 1024; # 8GiB
         }
         ./nix/configuration.nix
+        {
+          imports = [ arion.nixosModules.arion ];
+        }
       ];
       pkgs = import nixpkgs {
         inherit system;
@@ -70,6 +73,33 @@
           deployment = {
             targetHost = "colmena.blogServer"; # <- defined in ~/.ssh/config
             targetUser = "daisy";
+            keys = {
+              "wgpriv.key" = {
+                keyFile = "/home/daisy/secrets/wgpriv.key";
+                destDir = "/secrets"; # Default: /run/keys
+                uploadAt = "pre-activation";
+              };
+              "wgpub.key" = {
+                keyFile = "/home/daisy/secrets/wgpub.key";
+                destDir = "/secrets"; # Default: /run/keys
+                uploadAt = "pre-activation";
+              };
+              # "meilisearch.key" = {
+              #   keyFile = "secrets/meilisearch.key";
+              #   destDir = "/secrets"; # Default: /run/keys
+              #   uploadAt = "pre-activation";
+              # };
+              "digitalocean.key" = {
+                keyFile = "/home/daisy/secrets/digitalocean.key";
+                destDir = "/secrets"; # Default: /run/keys
+                uploadAt = "pre-activation";
+              };
+              ".env" = {
+                keyFile = "/home/daisy/secrets/strapi/.env";
+                destDir = "/docker/appdata/app"; # Default: /run/keys
+                uploadAt = "pre-activation";
+              };
+            };
           };
           imports = [
             ./nix/configuration.nix
@@ -142,6 +172,7 @@
           inherit system;
           inherit modules;
           format = "do"; # DigitalOcean
+          specialArgs = { inherit self; };
         };
       };
 
