@@ -8,16 +8,15 @@
 
 {
 
-  imports =
-    [
-      ./networking.nix
-      ./wireguard.nix
-    ]
-    # Required for Digital Ocean droplets.
-    ++ lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix
-    ++ [
-      (modulesPath + "/virtualisation/digital-ocean-config.nix")
-    ];
+  imports = [
+    ./networking.nix
+    ./wireguard.nix
+  ]
+  # Required for Digital Ocean droplets.
+  ++ lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix
+  ++ [
+    (modulesPath + "/virtualisation/digital-ocean-config.nix")
+  ];
 
   nix.settings = {
     # NOTE: Enable this if you want to allow deploying
@@ -99,11 +98,11 @@
           };
         };
 
-        "organizr.ianmadeit.org" = {
+        "home.ianmadeit.org" = {
           forceSSL = true;
           useACMEHost = "ianmadeit.org";
           locations."/" = {
-            proxyPass = "http://10.200.0.2:8080"; # default Strapi port
+            proxyPass = "http://10.200.0.2:80";
             extraConfig = ''
               allow 10.200.0.0/24;
               allow 192.168.168.0/24;
@@ -113,6 +112,7 @@
               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
               proxy_set_header X-Forwarded-Proto $scheme;
             '';
+            proxyWebsockets = true; # needed if you need to use WebSocket
           };
         };
         "ianmadeit.org" = {
@@ -123,7 +123,7 @@
             proxyPass = "http://localhost:3000";
           };
         };
-        "*.ianmadeit.org" = {
+        "auth.ianmadeit.org" = {
           forceSSL = true;
           useACMEHost = "ianmadeit.org";
           locations."/" = {
