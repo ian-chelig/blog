@@ -1,4 +1,6 @@
-export default ({ env }) => ({
+// config/admin.ts
+export default ({ env }: { env: (key: string) => string }): any => ({
+  url: env("ADMIN_URL") ?? "https://strapi.ianmadeit.org/admin",
   allowedHosts: ["strapi.ianmadeit.org"],
   auth: {
     secret: env("ADMIN_JWT_SECRET"),
@@ -10,12 +12,5 @@ export default ({ env }) => ({
     token: {
       salt: env("TRANSFER_TOKEN_SALT"),
     },
-  },
-  secrets: {
-    encryptionKey: env("ENCRYPTION_KEY"),
-  },
-  flags: {
-    nps: env.bool("FLAG_NPS", true),
-    promoteEE: env.bool("FLAG_PROMOTE_EE", true),
   },
 });

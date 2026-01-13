@@ -49,6 +49,7 @@
       # NOTE: Change this to whatever public key you use!
       authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINFs2mr6UYCjEtcP0DwBKd2lIAx/McPLF5kX5kpikfZy daisy@unwound"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ0Z4MxOyMgTlQPMKrON56DWsHCJVNnkh/muZz6b9ayX daisy@shellac"
       ];
     };
   };
@@ -87,13 +88,13 @@
           locations."/" = {
             proxyPass = "http://localhost:1337"; # default Strapi port
             extraConfig = ''
-              allow 10.200.0.0/24;
-              allow 192.168.168.0/24;
-              deny all;
+              proxy_set_header X-Forwarded-Proto $scheme;
               proxy_set_header Host $host;
               proxy_set_header X-Real-IP $remote_addr;
               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
+              allow 10.200.0.0/24;
+              allow 192.168.168.0/24;
+              deny all;
             '';
           };
         };
@@ -155,15 +156,15 @@
   virtualisation.arion.projects.strapi.settings =
     let
       appdir = "/docker/appdata/";
-      env = {
-        PUID = "1000";
-        PGID = "1000";
-        TZ = "America/Chicago";
-        NODE_ENV = "production";
-        HOST = "0.0.0.0";
-        PUBLIC_URL = "https://strapi.ianmadeit.org";
-        STRAPI_DISABLE_ADMIN_BUILD = "true";
-      };
+      # env = {
+      #   PUID = "1000";
+      #   PGID = "1000";
+      #   TZ = "America/Chicago";
+      #   NODE_ENV = "production";
+      #   HOST = "0.0.0.0";
+      #   PUBLIC_URL = "https://strapi.ianmadeit.org";
+      #   STRAPI_DISABLE_ADMIN_BUILD = "true";
+      # };
 
       restart = "unless-stopped";
     in
@@ -172,12 +173,11 @@
         useHostStore = true;
         inherit restart;
         image = "vshadbolt/strapi:5.33.0";
-        environment = env;
+        # environment = env;
         volumes = [
-          # (appdir + "./config/admin.js:/srv/app/admin/admin.js:ro")
-          # (appdir + "./config/vite.js:/srv/app/admin/vite.config.js:ro")
           (appdir + "strapi:/config")
           (appdir + "app:/srv/app")
+          "/secrets/strapi:/secrets/strapi"
         ];
         entrypoint = "/srv/app/start.sh";
         ports = [ "127.0.0.1:1337:1337" ];

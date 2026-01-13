@@ -37,6 +37,12 @@ in
           allowedIPs = [ "10.200.0.4/32" ];
           persistentKeepalive = 25;
         }
+        {
+          #daisy laptop
+          publicKey = "DNIgsfuN+fXVswLmRNi8Yq4sSgzKIZ9OYdAX4qzkczk=";
+          allowedIPs = [ "10.200.0.5/32" ];
+          persistentKeepalive = 25;
+        }
       ];
     };
   };
