@@ -22,7 +22,7 @@ in
         {
           #portal
           publicKey = "FuP5NEpKryk0U5t5LFTg2/egH8CHrZZGpgwEEyU5cWA=";
-          allowedIPs = [ "10.200.0.2/32" "192.168.168.0/24" ];
+          allowedIPs = [ "10.200.0.2/32" "192.168.168.0/24" "10.0.0.0/24" ];
           persistentKeepalive = 25;
         }
         {

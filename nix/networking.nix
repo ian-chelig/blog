@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   time.timeZone = "UTC";
@@ -35,6 +35,7 @@
         iptables -A FORWARD -i wg1 -o wg1 -j ACCEPT
         iptables -A FORWARD -i wg1 -j ACCEPT
         iptables -A FORWARD -o wg1 -j ACCEPT
+        ${pkgs.iproute2}/bin/ip route add 10.0.0.0/24 via 10.200.0.2 dev wg1 || true
       '';
     };
   };

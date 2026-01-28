@@ -98,6 +98,7 @@
               proxy_set_header X-Forwarded-Proto  https;
               proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
               proxy_set_header X-Real-IP          $remote_addr;
+              proxy_cookie_path / "/; Secure; HttpOnly; SameSite=Lax";
             '';
           };
         };
@@ -130,7 +131,7 @@
               proxy_set_header X-Forwarded-Proto $scheme;
               add_header Content-Security-Policy "frame-ancestors 'self' https://home.ianmadeit.org;" always;
               satisfy any;
-              allow 10.200.0.0/24;
+              allow 10.0.0.0/8;
               allow 192.168.168.0/24;
               deny all;
             '';
@@ -362,7 +363,12 @@
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;
 
-                allow 10.200.0.0/24;
+                proxy_set_header Connection "";
+                proxy_buffering off;
+                proxy_request_buffering off;
+                proxy_cache off;
+
+                allow 10.0.0.0/8;
                 allow 192.168.168.0/24;
                 deny all;
               '';
@@ -383,7 +389,7 @@
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;
 
-                allow 10.200.0.0/24;
+                allow 10.0.0.0/8;
                 allow 192.168.168.0/24;
                 deny all;
               '';
@@ -413,6 +419,54 @@
         };
 
         "audiobookshelf.ianmadeit.org" = {
+          forceSSL = true;
+          useACMEHost = "ianmadeit.org";
+          locations = {
+            "/" = {
+              proxyPass = "http://10.200.0.2:80";
+              proxyWebsockets = true; # needed if you need to use WebSocket
+              extraConfig = ''
+                proxy_buffer_size 128k;
+                proxy_buffers 4 256k;
+                proxy_busy_buffers_size 256k;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto https;
+
+                allow 10.200.0.0/24;
+                allow 192.168.168.0/24;
+                deny all;
+              '';
+            };
+          };
+        };
+
+        "matrix.ianmadeit.org" = {
+          forceSSL = true;
+          useACMEHost = "ianmadeit.org";
+          locations = {
+            "/" = {
+              proxyPass = "http://10.200.0.2:80";
+              proxyWebsockets = true; # needed if you need to use WebSocket
+              extraConfig = ''
+                proxy_buffer_size 128k;
+                proxy_buffers 4 256k;
+                proxy_busy_buffers_size 256k;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto https;
+
+                allow 10.200.0.0/24;
+                allow 192.168.168.0/24;
+                deny all;
+              '';
+            };
+          };
+        };
+
+        "turn.ianmadeit.org" = {
           forceSSL = true;
           useACMEHost = "ianmadeit.org";
           locations = {
