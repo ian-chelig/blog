@@ -12,7 +12,7 @@ const Navbar = () => {
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex items-center justify-between">
           <div className="text-xl font-semibold tracking-wide hover:text-gray-400">
-            <a href="/">Ian Chelig</a>
+            <a href="https://rxresu.me/ianm.chelig/it">Ian Chelig</a>
           </div>
 
           <nav className="hidden md:flex items-center gap-4 text-sm">

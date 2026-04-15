@@ -1,5 +1,4 @@
 {
-  pkgs,
   ...
 }:
 let
@@ -7,9 +6,9 @@ let
 in
 {
   boot.kernel.sysctl = {
-  "net.ipv4.ip_forward" = 1;
-  "net.ipv6.conf.all.forwarding" = 1;
-};
+    "net.ipv4.ip_forward" = 1;
+    "net.ipv6.conf.all.forwarding" = 1;
+  };
   networking.wireguard.interfaces = {
     # "wg0" is the network interface name. You can name the interface arbitrarily.
     wg1 = {
@@ -22,7 +21,11 @@ in
         {
           #portal
           publicKey = "FuP5NEpKryk0U5t5LFTg2/egH8CHrZZGpgwEEyU5cWA=";
-          allowedIPs = [ "10.200.0.2/32" "192.168.168.0/24" "10.0.0.0/24" ];
+          allowedIPs = [
+            "10.200.0.2/32"
+            "192.168.168.0/24"
+            "10.0.0.0/24"
+          ];
           persistentKeepalive = 25;
         }
         {
@@ -41,6 +44,18 @@ in
           #daisy laptop
           publicKey = "DNIgsfuN+fXVswLmRNi8Yq4sSgzKIZ9OYdAX4qzkczk=";
           allowedIPs = [ "10.200.0.5/32" ];
+          persistentKeepalive = 25;
+        }
+        {
+          #aidan workstation
+          publicKey = "sa9J840iqTINFw8P4bbZiUcouaw+BmpnyyfpEkacWF0=";
+          allowedIPs = [ "10.200.0.6/32" ];
+          persistentKeepalive = 25;
+        }
+        {
+          #aidan phone
+          publicKey = "wT0TEzsiuE9vN0ZN2nVl6skzDzTRNcEujpt8cyepbA0=";
+          allowedIPs = [ "10.200.0.7/32" ];
           persistentKeepalive = 25;
         }
       ];

@@ -8,16 +8,15 @@
 
 {
 
-  imports =
-    [
-      ./networking.nix
-      ./wireguard.nix
-    ]
-    # Required for Digital Ocean droplets.
-    ++ lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix
-    ++ [
-      (modulesPath + "/virtualisation/digital-ocean-config.nix")
-    ];
+  imports = [
+    ./networking.nix
+    ./wireguard.nix
+  ]
+  # Required for Digital Ocean droplets.
+  ++ lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix
+  ++ [
+    (modulesPath + "/virtualisation/digital-ocean-config.nix")
+  ];
 
   nix.settings = {
     # NOTE: Enable this if you want to allow deploying
@@ -327,7 +326,7 @@
               '';
             };
           };
-          };
+        };
 
         "prowlarr.ianmadeit.org" = {
           forceSSL = true;
@@ -418,6 +417,67 @@
           };
         };
 
+        "wazuh.ianmadeit.org" = {
+          forceSSL = true;
+          useACMEHost = "ianmadeit.org";
+          locations = {
+            "/" = {
+              proxyPass = "http://10.200.0.2:80";
+              proxyWebsockets = true; # needed if you need to use WebSocket
+              extraConfig = ''
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+
+                allow 10.200.0.0/24;
+                allow 192.168.168.0/24;
+                deny all;
+              '';
+            };
+          };
+        };
+        "wazuh-indexer.ianmadeit.org" = {
+          forceSSL = true;
+          useACMEHost = "ianmadeit.org";
+          locations = {
+            "/" = {
+              proxyPass = "http://10.200.0.2:80";
+              proxyWebsockets = true; # needed if you need to use WebSocket
+              extraConfig = ''
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+
+                allow 10.200.0.0/24;
+                allow 192.168.168.0/24;
+                deny all;
+              '';
+            };
+          };
+        };
+        "wazuh-manager.ianmadeit.org" = {
+          forceSSL = true;
+          useACMEHost = "ianmadeit.org";
+          locations = {
+            "/" = {
+              proxyPass = "http://10.200.0.2:80";
+              proxyWebsockets = true; # needed if you need to use WebSocket
+              extraConfig = ''
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+
+                allow 10.200.0.0/24;
+                allow 192.168.168.0/24;
+                deny all;
+              '';
+            };
+          };
+        };
+
         "audiobookshelf.ianmadeit.org" = {
           forceSSL = true;
           useACMEHost = "ianmadeit.org";
@@ -446,18 +506,65 @@
           forceSSL = true;
           useACMEHost = "ianmadeit.org";
           locations = {
-            "/" = {
-              proxyPass = "http://10.200.0.2:80";
-              proxyWebsockets = true; # needed if you need to use WebSocket
+            # "^~ /livekit/jwt/" = {
+            #   priority = 400;
+            #   proxyPass = "http://10.200.0.2:9119/";
+            #   extraConfig = ''
+            #     proxy_set_header Host $host;
+            #     proxy_set_header X-Forwarded-Proto https;
+            #   '';
+            # };
+            # "^~ /livekit/sfu/" = {
+            #   extraConfig = ''
+            #     proxy_send_timeout 120;
+            #     proxy_read_timeout 120;
+            #     proxy_buffering off;
+            #
+            #     proxy_set_header Accept-Encoding gzip;
+            #     proxy_set_header Upgrade $http_upgrade;
+            #     proxy_set_header Connection "upgrade";
+            #   '';
+            #   priority = 400;
+            #   proxyPass = "http://10.200.0.2:7880/";
+            #   proxyWebsockets = true;
+            # };
+            "/.well-known/matrix/client" = {
+              proxyWebsockets = true;
               extraConfig = ''
-                proxy_buffer_size 128k;
-                proxy_buffers 4 256k;
-                proxy_busy_buffers_size 256k;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto https;
+                default_type application/json;
+                return 200 '{
+                  "m.homeserver": {
+                    "base_url": "https://matrix.ianmadeit.org",
+                    "server_name": "matrix.ianmadeit.org"
+                  },
+                  "m.identity_server": {
+                    "base_url": "https://vector.im"
+                  },
+                  "org.matrix.msc3575.proxy": {
+                    "url": "https://matrix.ianmadeit.org"
+                  },
+                  "org.matrix.msc4143.rtc_foci": [
+                    {
+                      "type": "livekit",
+                      "livekit_service_url": "https://matrix.ianmadeit.org/livekit/jwt"
+                    }
+                  ]
+                }';
+              '';
+            };
 
+            "/" = {
+              proxyPass = "http://10.200.0.2:8008/";
+              proxyWebsockets = true;
+              extraConfig = ''
+                proxy_buffering off;
+                proxy_request_buffering off;
+                proxy_read_timeout 600s;
+
+                add_header Content-Security-Policy "frame-ancestors 'self' https://home.ianmadeit.org;" always;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-Proto https;
+                proxy_set_header X-Forwarded-For $remote_addr;
                 allow 10.200.0.0/24;
                 allow 192.168.168.0/24;
                 deny all;
@@ -466,7 +573,7 @@
           };
         };
 
-        "turn.ianmadeit.org" = {
+        "element.ianmadeit.org" = {
           forceSSL = true;
           useACMEHost = "ianmadeit.org";
           locations = {
@@ -481,6 +588,7 @@
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto https;
+                add_header Content-Security-Policy "frame-ancestors 'self' https://home.ianmadeit.org;" always;
 
                 allow 10.200.0.0/24;
                 allow 192.168.168.0/24;
